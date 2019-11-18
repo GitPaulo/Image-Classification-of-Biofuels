@@ -243,3 +243,4 @@ TSWLatexianTemp*
 
 # Custom files
 dataset/
+trained_model/
