@@ -244,3 +244,5 @@ TSWLatexianTemp*
 # Custom files
 dataset/
 trained_model/
+app/pictures/
+app/ICB_APP/
