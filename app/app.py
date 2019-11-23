@@ -12,7 +12,7 @@ PICTURES_ROOT = './pictures/'
 pic_counter = 1
 kr = tf.keras
 vgg16 = kr.applications.vgg16
-model = kr.models.load_model("../trained_model")
+model = kr.models.load_model("./trained_model")
 
 # Add a touch of color
 sg.change_look_and_feel('Reds')	
