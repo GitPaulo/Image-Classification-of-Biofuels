@@ -246,3 +246,4 @@ dataset/
 trained_model/
 app/pictures/
 app/ICB_APP/
+app/trained_models/
