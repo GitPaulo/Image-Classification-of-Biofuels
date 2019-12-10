@@ -1,5 +1,7 @@
 # Commonly used functions in the project
+import os
 import numpy as np
+import _pickle as cPickle
 from time import gmtime, strftime
 from matplotlib import pyplot as plt
 from sklearn.metrics import confusion_matrix
@@ -70,4 +72,15 @@ def plot_confusion_matrix(y_true, y_pred, classes,
     fig.tight_layout()
     return ax
     
+def saveTrainedModel(model, folderName="NewModel", fileName="model"):
+    folderPath = "app\\trained_models\\" + folderName
+    
+    # Check if folder exists, otherwise creat
+    if not os.path.exists(folderPath):
+        os.makedirs(folderPath)
+    
+    # Dump model
+    with open(folderPath + "\\" + fileName + '.pkl', 'wb') as fid:
+        cPickle.dump(model, fid)
+  
 log("Library functions loaded.")
