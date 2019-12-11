@@ -2,8 +2,11 @@
 import os
 import numpy as np
 import _pickle as cPickle
+
 from time import gmtime, strftime
 from matplotlib import pyplot as plt
+from matplotlib import pyplot as pp
+from matplotlib import image as mpimg
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import classification_report
 from sklearn.utils.multiclass import unique_labels
@@ -71,7 +74,17 @@ def plot_confusion_matrix(y_true, y_pred, classes,
     
     fig.tight_layout()
     return ax
-    
+
+def shuffleRawDataset(data, labels):
+    result = np.arange(data.shape[0])
+    np.random.shuffle(result)
+    return data[result], labels[result]
+
+def shuffleJoinRawDatasets(data1, labels1, data2, labels2):
+    data1, labels1 = shuffleRawDataset(data1, labels1)
+    data2, labels2 = shuffleRawDataset(data2, labels2)
+    return np.concatenate((data1, data2)), np.concatenate((labels1, labels2))
+
 def saveTrainedModel(model, folderName="NewModel", fileName="model"):
     folderPath = "app\\trained_models\\" + folderName
     
@@ -82,5 +95,20 @@ def saveTrainedModel(model, folderName="NewModel", fileName="model"):
     # Dump model
     with open(folderPath + "\\" + fileName + '.pkl', 'wb') as fid:
         cPickle.dump(model, fid)
-  
+
+# Tool to display data set and its labels
+def plots(ims, figsize=(12,6), rows=1, interp=False, titles=None):
+	if type(ims[0]) is np.ndarray:
+		ims = np.array(ims).astype(np.uint8)
+		if (ims.shape[-1] != 3):
+			ims = ims.transpose((0,2,3,1))
+	f = pp.figure(figsize=figsize)
+	cols = len(ims)//rows if len(ims) % 2 == 0 else len(ims)//rows + 1
+	for i in range(len(ims)):
+		sp = f.add_subplot(rows, cols, i+1)
+		sp.axis('Off')
+		if titles is not None:
+			sp.set_title(titles[i], fontsize=16)
+		pp.imshow(ims[i], interpolation=None if interp else 'none')
+        
 log("Library functions loaded.")
