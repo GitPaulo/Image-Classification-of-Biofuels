@@ -3,6 +3,7 @@ import os
 import numpy as np
 import _pickle as cPickle
 
+from tensorflow.python.keras.utils.data_utils import Sequence
 from time import gmtime, strftime
 from matplotlib import pyplot as plt
 from matplotlib import pyplot as pp
@@ -11,6 +12,7 @@ from sklearn.metrics import confusion_matrix
 from sklearn.metrics import classification_report
 from sklearn.utils.multiclass import unique_labels
 
+# Turns something into it's string representation
 def stringify(something):
     if type(something) == list:
         return [stringify(x) for x in something]
@@ -18,11 +20,13 @@ def stringify(something):
         return tuple(stringify(list(something)))
     else:
         return str(something)
-    
+
+# Logging function used throughout the project
 def log(*msg):
     msg = stringify(msg)
     print(strftime("[%H:%M:%S]", gmtime()), " ".join(msg))
-    
+
+# Uses matplotlib and sklearn to plot a visualisation of a confusion matrix   
 def plot_confusion_matrix(y_true, y_pred, classes,
                           normalize=True,
                           title=None,
@@ -75,16 +79,20 @@ def plot_confusion_matrix(y_true, y_pred, classes,
     fig.tight_layout()
     return ax
 
+# Shuffles two datasets (keeps label order_
 def shuffleRawDataset(data, labels):
     result = np.arange(data.shape[0])
     np.random.shuffle(result)
     return data[result], labels[result]
 
+# Shuffles and joins two datasets (keeps label order)
 def shuffleJoinRawDatasets(data1, labels1, data2, labels2):
     data1, labels1 = shuffleRawDataset(data1, labels1)
     data2, labels2 = shuffleRawDataset(data2, labels2)
     return np.concatenate((data1, data2)), np.concatenate((labels1, labels2))
 
+
+# Serialises and saves a model to the application folder
 def saveTrainedModel(model, folderName="NewModel", fileName="model"):
     folderPath = "app\\trained_models\\" + folderName
     
@@ -110,5 +118,36 @@ def plots(ims, figsize=(12,6), rows=1, interp=False, titles=None):
 		if titles is not None:
 			sp.set_title(titles[i], fontsize=16)
 		pp.imshow(ims[i], interpolation=None if interp else 'none')
-        
+
+# A class that defines a sequence of two generators to be used in model fitting
+class CombinedGenerator(Sequence):
+    def __init__(self, seq1, seq2):
+        if seq1.batch_size != seq2.batch_size:
+            raise Exception('Input generator sequences must share batch_size.')
+        if seq1.sample_weight != seq2.sample_weight:
+            raise Exception('Input generator sequences must share sample_weight.')
+        # Combined properties
+        self.seq1, self.seq2 = seq1, seq2
+        self.samples = seq1.samples + seq2.samples
+        self.classes =  np.concatenate((seq1.classes, seq2.classes))
+        self.filepaths =  np.unique(np.concatenate((seq1.filepaths, seq2.filepaths)))
+        self.labels =  np.concatenate((seq1.labels, seq2.labels))
+        # Adoptions (1st gen)
+        self.batch_size = seq1.batch_size
+        self.sample_weight = seq1.sample_weight
+    def __len__(self):
+        return len(self.seq1) + len(self.seq2)
+    def __getitem__(self, index):
+        seqc = self.seq1
+        if index >= len(self.seq1):
+            seqc = self.seq2
+            index = index - len(self.seq1)
+        return seqc[index]
+    def reset(self):
+        self.seq1.reset()
+        self.seq2.reset()
+    def setBatchSize(self, size):
+        self.seq1.batch_size = size;
+        self.seq2.batch_size = size;
+    
 log("Library functions loaded.")
