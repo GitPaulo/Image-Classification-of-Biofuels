@@ -7,6 +7,13 @@ An analysis on the usefulness of various typical classification methods when app
 - KNN
 - Random Forest
 
+### Dataset
+Our dataset was small, but was expanded by augmentation. A quick look into the dataset:
+
+<p align="center">
+  <img src="./.github/data_labeled.png"/>
+</p>
+
 ### Verdict
 As predicted, when using simple traditional model fitting techniques, convolutional neural networks performed the best by a good margin.
 
