@@ -8,7 +8,7 @@ An analysis on the usefulness of various typical classification methods when app
 - Random Forest
 
 ### Dataset
-Our dataset was small, but was expanded by augmentation. A quick look into the dataset:
+Our dataset was small, but was expanded by augmentation. A quick look into a small subset of our dataset:
 
 <p align="center">
   <img src="./.github/data_labeled.png"/>
@@ -28,5 +28,5 @@ A simple GUI based application was coded that allows the loading of the trained 
   <img src="./.github/example_app.gif" style="border:5px double black;"/>
 </p>
 
-#### Dataset and Trained Models
+#### Full Dataset and Trained Models
 Large files can be found at: https://drive.google.com/open?id=1JPRsoK4WOJitXLvhHDIsXDuCVernQHh0
